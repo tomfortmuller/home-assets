@@ -1,0 +1,32 @@
+created:
+    - database/factories/CategoryFactory.php
+    - database/factories/ImageFactory.php
+    - database/factories/DocumentFactory.php
+    - database/factories/LocationFactory.php
+    - database/factories/ManufacturerFactory.php
+    - database/factories/VendorFactory.php
+    - database/factories/AssetFactory.php
+    - database/migrations/2024_07_13_161703_create_categories_table.php
+    - database/migrations/2024_07_13_161704_create_images_table.php
+    - database/migrations/2024_07_13_161705_create_documents_table.php
+    - database/migrations/2024_07_13_161706_create_locations_table.php
+    - database/migrations/2024_07_13_161707_create_manufacturers_table.php
+    - database/migrations/2024_07_13_161708_create_vendors_table.php
+    - database/migrations/2024_07_13_161709_create_assets_table.php
+    - database/migrations/2024_07_13_161710_create_asset_category_table.php
+    - app/Models/Category.php
+    - app/Models/Image.php
+    - app/Models/Document.php
+    - app/Models/Location.php
+    - app/Models/Manufacturer.php
+    - app/Models/Vendor.php
+    - app/Models/Asset.php
+models:
+    User: { name: string, email: string, email_verified_at: 'timestamp nullable', password: string, remember_token: 'string:100 nullable' }
+    Category: { name: string, relationships: { belongsToMany: Asset } }
+    Image: { filename: string, path: string, sort: int, relationships: { belongsTo: Asset } }
+    Document: { filename: string, path: string, sort: int, relationships: { belongsTo: Asset } }
+    Location: { name: string, address_line_1: 'string nullable', address_line_2: 'string nullable', city: 'string nullable', state: 'string nullable', zip: 'string nullable', relationships: { belongsTo: 'Location:parent nullable', hasMany: Asset } }
+    Manufacturer: { name: string, logo_path: 'string nullable', relationships: { hasMany: Asset } }
+    Vendor: { name: string, logo_path: 'string nullable', relationships: { hasMany: Asset } }
+    Asset: { name: string, model_number: 'string nullable', serial_number: 'string nullable', purchased_at: 'date nullable', purchase_price: 'decimal nullable', relationships: { hasMany: 'Image, Document', belongsTo: 'Location, Manufacturer, Vendor', belongsToMany: Category } }
