@@ -63,7 +63,7 @@ class LocationResource extends Resource
                     ->sortable(),
                 Tables\Columns\TextColumn::make('address_line_1')
                     ->searchable()
-                    ->toggleable(),
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('address_line_2')
                     ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -75,7 +75,7 @@ class LocationResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('zip')
                     ->searchable()
-                    ->toggleable(),
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()

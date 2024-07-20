@@ -22,7 +22,6 @@ class AssetResource extends Resource
     public static function form(Form $form): Form
     {
         return $form
-            ->inlineLabel()
             ->schema([
                 Forms\Components\Section::make()
                     ->columns(1)
