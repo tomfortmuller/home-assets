@@ -2,15 +2,12 @@
 
 namespace App\Filament\Resources\AssetResource\RelationManagers;
 
-use Faker\Provider\Text;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class ImagesRelationManager extends RelationManager
 {
@@ -58,7 +55,7 @@ class ImagesRelationManager extends RelationManager
                     //     ->numeric(),
                     Tables\Columns\ImageColumn::make('path')
                         ->size(175)
-                        // ->action()
+                    // ->action()
                     ,
                 ]),
             ])
@@ -78,7 +75,7 @@ class ImagesRelationManager extends RelationManager
                         $sortMax = $livewire->getOwnerRecord()->images()?->max('sort') ?? 0;
                         $data['sort'] = $sortMax + 1;
 
-                        return  $data;
+                        return $data;
                     }),
             ])
             ->actions([

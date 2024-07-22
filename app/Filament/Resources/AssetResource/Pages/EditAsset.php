@@ -18,9 +18,6 @@ class EditAsset extends EditRecord
         ];
     }
 
-    /**
-     * @return string|\Illuminate\Contracts\Support\Htmlable
-     */
     public function getHeading(): string|\Illuminate\Contracts\Support\Htmlable
     {
         return 'Edit '.$this->getRecord()->name;

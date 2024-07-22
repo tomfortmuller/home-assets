@@ -2,10 +2,9 @@
 
 namespace Database\Factories;
 
-use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Support\Str;
 use App\Models\Asset;
 use App\Models\Image;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
 class ImageFactory extends Factory
 {

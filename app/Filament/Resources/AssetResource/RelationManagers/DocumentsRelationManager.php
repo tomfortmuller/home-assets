@@ -3,7 +3,6 @@
 namespace App\Filament\Resources\AssetResource\RelationManagers;
 
 use App\Models\Document;
-use Filament\Actions\EditAction;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
@@ -64,15 +63,14 @@ class DocumentsRelationManager extends RelationManager
                         $sortMax = $livewire->getOwnerRecord()->documents()?->max('sort') ?? 0;
                         $data['sort'] = $sortMax + 1;
 
-                        return  $data;
+                        return $data;
                     }),
             ])
             ->actions([
                 Tables\Actions\Action::make('Download')
                     ->icon('heroicon-o-arrow-down-tray')
                     ->color('info')
-                    ->url(fn (Document $record) =>
-                        Storage::disk('public')->url($record->path)
+                    ->url(fn (Document $record) => Storage::disk('public')->url($record->path)
                     )
                     ->openUrlInNewTab(),
                 Tables\Actions\ViewAction::make()

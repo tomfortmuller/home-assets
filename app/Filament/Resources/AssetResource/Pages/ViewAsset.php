@@ -16,5 +16,4 @@ class ViewAsset extends ViewRecord
             Actions\EditAction::make(),
         ];
     }
-
 }

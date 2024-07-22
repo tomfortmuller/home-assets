@@ -12,7 +12,7 @@ class DocumentObserver
      */
     public function updated(Document $document): void
     {
-        if ($document->isDirty('path') && !is_null($document->getOriginal('path'))) {
+        if ($document->isDirty('path') && ! is_null($document->getOriginal('path'))) {
             Storage::disk('public')->delete($document->getOriginal('path'));
         }
     }
@@ -22,9 +22,8 @@ class DocumentObserver
      */
     public function deleted(Document $document): void
     {
-        if (!is_null($document->path)) {
+        if (! is_null($document->path)) {
             Storage::disk('public')->delete($document->path);
         }
     }
-
 }

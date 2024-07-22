@@ -2,12 +2,11 @@
 
 namespace Database\Factories;
 
-use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Support\Str;
 use App\Models\Asset;
 use App\Models\Location;
 use App\Models\Manufacturer;
 use App\Models\Vendor;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
 class AssetFactory extends Factory
 {

@@ -57,7 +57,7 @@ class AssetResource extends Resource
                             ->createOptionModalHeading('Create Location')
                             ->editOptionForm(fn (Form $form) => LocationResource::form($form))
                             ->editOptionModalHeading('Edit Location'),
-                ]),
+                    ]),
                 Forms\Components\Section::make()
                     ->description('Purchase Info')
                     ->columns([
@@ -84,7 +84,6 @@ class AssetResource extends Resource
                     ]),
             ]);
     }
-
 
     public static function table(Table $table): Table
     {
@@ -177,5 +176,4 @@ class AssetResource extends Resource
             'edit' => Pages\EditAsset::route('/{record}/edit'),
         ];
     }
-
 }

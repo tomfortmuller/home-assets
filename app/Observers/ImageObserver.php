@@ -12,7 +12,7 @@ class ImageObserver
      */
     public function updated(Image $image): void
     {
-        if ($image->isDirty('path') && !is_null($image->getOriginal('path'))) {
+        if ($image->isDirty('path') && ! is_null($image->getOriginal('path'))) {
             Storage::disk('public')->delete($image->getOriginal('path'));
         }
     }
@@ -22,7 +22,7 @@ class ImageObserver
      */
     public function deleted(Image $image): void
     {
-        if (!is_null($image->path)) {
+        if (! is_null($image->path)) {
             Storage::disk('public')->delete($image->path);
         }
     }
