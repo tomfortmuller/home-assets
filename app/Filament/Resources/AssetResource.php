@@ -7,11 +7,10 @@ use App\Filament\Resources\AssetResource\RelationManagers;
 use App\Models\Asset;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Resources\RelationManagers\RelationGroup;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class AssetResource extends Resource
 {
@@ -29,6 +28,11 @@ class AssetResource extends Resource
                         Forms\Components\TextInput::make('name')
                             ->required()
                             ->maxLength(255),
+
+                        Forms\Components\Select::make('categories')
+                            ->relationship(titleAttribute: 'name')
+                            ->multiple()
+                            ->preload(),
 
                         Forms\Components\Select::make('manufacturer_id')
                             ->relationship('manufacturer', 'name')
@@ -81,26 +85,33 @@ class AssetResource extends Resource
             ]);
     }
 
+
     public static function table(Table $table): Table
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name')
-                    ->searchable(),
                 Tables\Columns\ImageColumn::make('images.path')
+                    ->label('Image')
                     ->limit(1)
                     ->limitedRemainingText()
                     ->toggleable(),
+                Tables\Columns\TextColumn::make('name')
+                    ->searchable(isIndividual: true),
+                Tables\Columns\TextColumn::make('categories.name')
+                    ->badge()
+                    ->separator(',')
+                    ->searchable(isIndividual: true),
                 Tables\Columns\TextColumn::make('model_number')
-                    ->searchable()
+                    ->searchable(isIndividual: true)
                     ->toggleable(),
                 Tables\Columns\TextColumn::make('serial_number')
-                    ->searchable()
+                    ->searchable(isIndividual: true)
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('purchased_at')
                     ->label('Purchased On')
                     ->date()
                     ->sortable()
+                    ->searchable(isIndividual: true)
                     ->toggleable(isToggledHiddenByDefault: true),
 
                 Tables\Columns\TextColumn::make('purchase_price')
@@ -108,16 +119,20 @@ class AssetResource extends Resource
                     ->prefix('$')
                     ->numeric()
                     ->sortable()
+                    ->searchable(isIndividual: true)
                     ->toggleable(),
 
                 Tables\Columns\TextColumn::make('location.name')
                     ->sortable()
+                    ->searchable(isIndividual: true)
                     ->toggleable(),
                 Tables\Columns\TextColumn::make('manufacturer.name')
                     ->sortable()
+                    ->searchable(isIndividual: true)
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('vendor.name')
                     ->sortable()
+                    ->searchable(isIndividual: true)
                     ->toggleable(isToggledHiddenByDefault: true),
 
                 Tables\Columns\TextColumn::make('created_at')
@@ -146,8 +161,10 @@ class AssetResource extends Resource
     public static function getRelations(): array
     {
         return [
-            RelationManagers\ImagesRelationManager::class,
-            RelationManagers\DocumentsRelationManager::class,
+            RelationGroup::make('Related', [
+                RelationManagers\ImagesRelationManager::class,
+                RelationManagers\DocumentsRelationManager::class,
+            ]),
         ];
     }
 
@@ -160,4 +177,5 @@ class AssetResource extends Resource
             'edit' => Pages\EditAsset::route('/{record}/edit'),
         ];
     }
+
 }

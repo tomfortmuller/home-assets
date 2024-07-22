@@ -5,6 +5,7 @@ namespace App\Filament\Resources\AssetResource\Pages;
 use App\Filament\Resources\AssetResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
+use Filament\Support\Enums\MaxWidth;
 
 class ListAssets extends ListRecords
 {
@@ -15,5 +16,10 @@ class ListAssets extends ListRecords
         return [
             Actions\CreateAction::make(),
         ];
+    }
+
+    public function getMaxContentWidth(): MaxWidth|string|null
+    {
+        return MaxWidth::Full;
     }
 }

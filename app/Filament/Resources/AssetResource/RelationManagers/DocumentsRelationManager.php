@@ -3,18 +3,24 @@
 namespace App\Filament\Resources\AssetResource\RelationManagers;
 
 use App\Models\Document;
+use Filament\Actions\EditAction;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
+use Joaopaulolndev\FilamentPdfViewer\Forms\Components\PdfViewerField;
 
 class DocumentsRelationManager extends RelationManager
 {
     protected static string $relationship = 'documents';
+
+    public static function getBadge(Model $ownerRecord, string $pageClass): ?string
+    {
+        return $ownerRecord->documents()?->count() ?? false;
+    }
 
     public function form(Form $form): Form
     {
@@ -23,14 +29,20 @@ class DocumentsRelationManager extends RelationManager
             ->schema([
                 Forms\Components\TextInput::make('name')
                     ->required(),
+
                 Forms\Components\FileUpload::make('path')
                     ->required()
+                    ->hiddenOn('view')
+                    ->acceptedFileTypes(['application/pdf'])
                     ->maxSize('20480') // 20 MB
                     ->previewable()
                     ->directory('documents/assets')
                     ->storeFileNamesIn('filename')
                     ->moveFiles()
                     ->downloadable(),
+
+                PdfViewerField::make('path')
+                    ->hiddenOn(['create', 'edit']),
             ]);
     }
 
@@ -63,10 +75,14 @@ class DocumentsRelationManager extends RelationManager
                         Storage::disk('public')->url($record->path)
                     )
                     ->openUrlInNewTab(),
+                Tables\Actions\ViewAction::make()
+                    ->modalWidth('3xl')
+                    ->modalHeading('View Document'),
                 Tables\Actions\EditAction::make()
-                    ->modalWidth('md')
+                    ->modalWidth('3xl')
                     ->modalHeading('Edit Document'),
-                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\DeleteAction::make()
+                    ->modalWidth('3xl'),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

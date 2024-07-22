@@ -18,11 +18,6 @@ class EditAsset extends EditRecord
         ];
     }
 
-    public function hasCombinedRelationManagerTabsWithContent(): bool
-    {
-        return true;
-    }
-
     /**
      * @return string|\Illuminate\Contracts\Support\Htmlable
      */

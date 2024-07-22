@@ -17,8 +17,4 @@ class ViewAsset extends ViewRecord
         ];
     }
 
-    public function hasCombinedRelationManagerTabsWithContent(): bool
-    {
-        return true;
-    }
 }

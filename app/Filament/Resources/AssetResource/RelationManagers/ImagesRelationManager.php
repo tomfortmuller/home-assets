@@ -16,6 +16,16 @@ class ImagesRelationManager extends RelationManager
 {
     protected static string $relationship = 'images';
 
+    public static function getTitle(Model $ownerRecord, string $pageClass): string
+    {
+        return 'Asset Images';
+    }
+
+    public static function getBadge(Model $ownerRecord, string $pageClass): ?string
+    {
+        return $ownerRecord->images()?->count() ?? false;
+    }
+
     public function form(Form $form): Form
     {
         return $form
@@ -24,16 +34,12 @@ class ImagesRelationManager extends RelationManager
                 Forms\Components\FileUpload::make('path')
                     ->required()
                     ->image()
+                    ->imagePreviewHeight(500)
                     ->maxSize(2048)
                     ->directory('images/assets')
                     ->storeFileNamesIn('filename')
                     ->moveFiles(),
             ]);
-    }
-
-    public static function getTitle(Model $ownerRecord, string $pageClass): string
-    {
-        return 'Asset Images';
     }
 
     public function table(Table $table): Table
@@ -47,10 +53,20 @@ class ImagesRelationManager extends RelationManager
                 ->label($isReordering ? 'Done' : 'Reorder')
             )
             ->columns([
-                Tables\Columns\TextColumn::make('sort')
-                    ->numeric(),
-                Tables\Columns\ImageColumn::make('path')
-                    ->sortable(),
+                Tables\Columns\Layout\Split::make([
+                    // Tables\Columns\TextColumn::make('sort')
+                    //     ->numeric(),
+                    Tables\Columns\ImageColumn::make('path')
+                        ->size(175)
+                        // ->action()
+                    ,
+                ]),
+            ])
+            ->contentGrid([
+                'xs' => 1,
+                'sm' => 2,
+                'md' => 3,
+                'xl' => 4,
             ])
             ->filters([
                 //
@@ -66,10 +82,17 @@ class ImagesRelationManager extends RelationManager
                     }),
             ])
             ->actions([
+                Tables\Actions\ViewAction::make()
+                    ->label(false)
+                    ->modalWidth('3xl')
+                    ->modalHeading('View Image'),
                 Tables\Actions\EditAction::make()
-                    ->modalWidth('md')
+                    ->label(false)
+                    ->modalWidth('3xl')
                     ->modalHeading('Edit Image'),
-                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\DeleteAction::make()
+                    ->label(false)
+                    ->after(fn ($livewire) => $livewire->dispatch('refreshRelation')),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
