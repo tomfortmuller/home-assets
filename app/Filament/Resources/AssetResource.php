@@ -5,12 +5,17 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\AssetResource\Pages;
 use App\Filament\Resources\AssetResource\RelationManagers;
 use App\Models\Asset;
+use App\Models\Manufacturer;
+use App\Models\Vendor;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationGroup;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\HtmlString;
+use function Termwind\render;
 
 class AssetResource extends Resource
 {
@@ -18,9 +23,17 @@ class AssetResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
+    public static function getManufacturerOption(Model $model): string {
+        // return "<div><b>$id</b> $name</div>";
+        return view('filament-select-option')
+            ->with('name', $model->name)
+            ->with('logo', $model->logo);
+    }
+
     public static function form(Form $form): Form
     {
         return $form
+            ->inlineLabel()
             ->schema([
                 Forms\Components\Section::make()
                     ->columns(1)
@@ -37,7 +50,17 @@ class AssetResource extends Resource
                         Forms\Components\Select::make('manufacturer_id')
                             ->relationship('manufacturer', 'name')
                             ->searchable()
-                            ->preload()
+                            ->allowHtml()
+                            ->getSearchResultsUsing(function (string $search) {
+                                $manufacturers = Manufacturer::where('name', 'like', "%$search%")->limit(50)->get();
+                                return $manufacturers->mapWithKeys(function ($manufacturer) {
+                                    return [$manufacturer->getKey() => static::getManufacturerOption($manufacturer)];
+                                });
+                            })
+                            ->getOptionLabelUsing(function ($value): string {
+                                $manufacturer = Manufacturer::find($value);
+                                return static::getManufacturerOption($manufacturer);
+                            })
                             ->createOptionForm(fn (Form $form) => ManufacturerResource::form($form))
                             ->createOptionModalHeading('Create Manufacturer')
                             ->editOptionForm(fn (Form $form) => ManufacturerResource::form($form))
@@ -60,27 +83,33 @@ class AssetResource extends Resource
                     ]),
                 Forms\Components\Section::make()
                     ->description('Purchase Info')
-                    ->columns([
-                        'default' => 1,
-                        'lg' => 3,
-                        // 'lg' => 5,
-                    ])
+                    ->inlineLabel()
                     ->schema([
+                        Forms\Components\Select::make('vendor_id')
+                            ->relationship('vendor', 'name')
+                            ->searchable()
+                            ->allowHtml()
+                            ->getSearchResultsUsing(function (string $search) {
+                                $vendors = Vendor::where('name', 'like', "%$search%")->limit(50)->get();
+                                return $vendors->mapWithKeys(function ($vendor) {
+                                    return [$vendor->getKey() => static::getManufacturerOption($vendor)];
+                                });
+                            })
+                            ->getOptionLabelUsing(function ($value): string {
+                                $vendor = Vendor::find($value);
+                                return static::getManufacturerOption($vendor);
+                            })
+                            ->createOptionForm(fn (Form $form) => VendorResource::form($form))
+                            ->createOptionModalHeading('Create Vendor')
+                            ->editOptionForm(fn (Form $form) => VendorResource::form($form))
+                            ->editOptionModalHeading('Edit Vendor'),
+
                         Forms\Components\DatePicker::make('purchased_at')
                             ->label('Purchase Date'),
 
                         Forms\Components\TextInput::make('purchase_price')
                             ->numeric()
                             ->prefix('$'),
-
-                        Forms\Components\Select::make('vendor_id')
-                            ->relationship('vendor', 'name')
-                            ->searchable()
-                            ->preload()
-                            ->createOptionForm(fn (Form $form) => VendorResource::form($form))
-                            ->createOptionModalHeading('Create Vendor')
-                            ->editOptionForm(fn (Form $form) => VendorResource::form($form))
-                            ->editOptionModalHeading('Edit Vendor'),
                     ]),
             ]);
     }
